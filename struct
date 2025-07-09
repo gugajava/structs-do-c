@@ -1,29 +1,107 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_VENDAS 100
+
 typedef struct {
     int pecas;
     float preco;
 } Venda;
 
-int main(){
-    Venda A = {10, 55.0};
-    Venda B = {15, 124.00};
-    Venda total;
-    total.pecas = A.pecas + B.pecas;
-    total.preco = A.preco + B.preco;
-    printf("\n Total Pecas.....:%d\n", total.pecas);
-    printf("\n Total preco.....:%2.2f\n", total.preco);
+// Prototipagem das funções
+Venda calcularTotal(Venda v1, Venda v2);
+void imprimeVenda(Venda v, int index);
+void imprimeTotal(Venda v1, Venda v2);
+Venda novaVenda();
+
+int main() {
+    Venda vendas[MAX_VENDAS];
+    int totalVendas = 0;
+    int opcao;
+
+    do {
+        printf("\n====== MENU ======\n");
+        printf("1. Registrar nova venda\n");
+        printf("2. Listar todas as vendas\n");
+        printf("3. Mostrar total de duas vendas\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+            case 1:
+                if (totalVendas < MAX_VENDAS) {
+                    vendas[totalVendas] = novaVenda();
+                    totalVendas++;
+                    printf("Venda registrada com sucesso!\n");
+                } else {
+                    printf("Limite de vendas atingido!\n");
+                }
+                break;
+            case 2:
+                if (totalVendas == 0) {
+                    printf("Nenhuma venda registrada.\n");
+                } else {
+                    printf("\n=== Lista de Vendas ===\n");
+                    for (int i = 0; i < totalVendas; i++) {
+                        imprimeVenda(vendas[i], i);
+                    }
+                }
+                break;
+            case 3:
+                if (totalVendas < 2) {
+                    printf("É necessário registrar pelo menos duas vendas.\n");
+                } else {
+                    int i1, i2;
+                    printf("Informe o índice das duas vendas (0 a %d): ", totalVendas - 1);
+                    scanf("%d %d", &i1, &i2);
+                    if (i1 >= 0 && i2 >= 0 && i1 < totalVendas && i2 < totalVendas) {
+                        imprimeTotal(vendas[i1], vendas[i2]);
+                    } else {
+                        printf("Índices inválidos!\n");
+                    }
+                }
+                break;
+            case 0:
+                printf("Saindo do programa...\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
+        }
+
+    } while(opcao != 0);
+
+    return 0;
 }
 
-typedef struct{
-  int pecas;
-  float preco;
-} Venda;
-void imprimeTotal(Venda v1, Venda v2){
-  Venda total = {0, 0.0};
-  total,pecas = v1.pecas + v2.pecas;
-  total.preco = v1.preco + v2.preco;
-  printf("Qtde pecas:....: %d\n", total.pecas
-  
-  /// depois continua
-  
-  
+// Cria uma nova venda a partir da entrada do usuário
+Venda novaVenda() {
+    Venda v;
+    printf("Informe a quantidade de peças: ");
+    scanf("%d", &v.pecas);
+    printf("Informe o valor total da venda (R$): ");
+    scanf("%f", &v.preco);
+    return v;
+}
+
+// Soma duas vendas e retorna a venda total
+Venda calcularTotal(Venda v1, Venda v2) {
+    Venda total;
+    total.pecas = v1.pecas + v2.pecas;
+    total.preco = v1.preco + v2.preco;
+    return total;
+}
+
+// Imprime uma venda
+void imprimeVenda(Venda v, int index) {
+    printf("Venda %d - Peças: %d | Preço: R$ %.2f\n", index, v.pecas, v.preco);
+}
+
+// Imprime o total de duas vendas
+void imprimeTotal(Venda v1, Venda v2) {
+    Venda total = calcularTotal(v1, v2);
+    printf("\n=== Total de Vendas Combinadas ===\n");
+    printf("Total de Peças: %d\n", total.pecas);
+    printf("Total em Reais: R$ %.2f\n", total.preco);
+}
+
